@@ -1,11 +1,11 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'maven'
-def buildType = /*"SNAPSHOT"*/"release"
-def mavenUrl = "http://10.32.2.200:8081/repository/globalegrow/"
-def mavenUrlSnapshot = "http://10.32.2.200:8081/repository/globalegrow-snapshot/"
+def buildType = true
+def mavenUrl = "http://" + String.valueOf(maven_ip) + ":8081/repository/globalegrow/"
+def mavenUrlSnapshot = "http://" + String.valueOf(maven_ip) + ":8081/repository/globalegrow-snapshot/"
 def mavenUserName = "longxl"
 def mavenPwd = "longxl123"
-def sdkVersionName = "1.0.0"
+def sdkVersionName = "1.0.1"
 def sdkVersionNameSnapshot = "1.0.0-SNAPSHOT"
 def pomName = "MultiStateView"
 def pomGroupId = "com.fz.multistateview"
@@ -45,7 +45,7 @@ uploadArchives {
         mavenDeployer {
             println "start upload aar build type:" + buildType
             def ver = sdkVersionName
-            if (buildType == "release") {
+            if (buildType) {
                 println "uploadArchives build release"
                 repository(url: mavenUrl) {
                     authentication(userName: mavenUserName, password: mavenPwd)

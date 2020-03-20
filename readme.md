@@ -80,7 +80,7 @@ public View getView（@ViewState int state）
 
 ```py
  repositories {
-        maven { url 'http://10.32.1.78:8081/repository/maven-public/' }
+        maven { url 'http://10.36.5.100:8081/repository/maven-public/' }
     }
 ```
 
@@ -88,7 +88,7 @@ public View getView（@ViewState int state）
 
 ```py
 dependencies {
-    implementation 'com.fz.multistateview:MultiStateView:1.0.0'
+    implementation 'com.fz.multistateview:MultiStateView:1.0.1'
 }
 ```
 

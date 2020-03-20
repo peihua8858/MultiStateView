@@ -78,6 +78,10 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
     private int mErrorViewResId = NO_ID;
     private int mNoNetworkViewResId = NO_ID;
     private int mProcessViewResId = NO_ID;
+    /**
+     * 是否在显示其他视图（如：{@link #VIEW_STATE_LOADING}等状态）的同时显示内容视图
+     */
+    private boolean isForceShowContent = false;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({VIEW_STATE_UNKNOWN, VIEW_STATE_CONTENT, VIEW_STATE_ERROR, VIEW_STATE_EMPTY, VIEW_STATE_LOADING, VIEW_STATE_NO_NETWORK, VIEW_STATE_PROCESS})
@@ -136,7 +140,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
             mLoadingViewResId = a.getResourceId(R.styleable.MultiStateView_msv_loadingView, NO_ID);
 
             mEmptyViewResId = a.getResourceId(R.styleable.MultiStateView_msv_emptyView, NO_ID);
-
+            isForceShowContent = a.getBoolean(R.styleable.MultiStateView_msv_forceShowContent, false);
             mErrorViewResId = a.getResourceId(R.styleable.MultiStateView_msv_errorView, NO_ID);
             mNoNetworkViewResId = a.getResourceId(R.styleable.MultiStateView_msv_noNetworkView, NO_ID);
             mProcessViewResId = a.getResourceId(R.styleable.MultiStateView_msv_processView, NO_ID);
@@ -243,6 +247,24 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
 
     public boolean hasLoadingView() {
         return mLoadingView != null || mLoadingViewResId != NO_ID;
+    }
+
+    /**
+     * 是否在显示其他视图（如：loading  error等）的同时显示内容视图
+     *
+     * @param forceShowContent true表示强制
+     * @author dingpeihua
+     * @date 2020/3/20 15:11
+     * @version 1.0
+     */
+    public void setForceShowContent(boolean forceShowContent) {
+        isForceShowContent = forceShowContent;
+    }
+
+    private void contentViewVisibility(boolean isShow) {
+        if (mContentView != null) {
+            mContentView.setVisibility(isForceShowContent || isShow ? VISIBLE : GONE);
+        }
     }
 
     /**
@@ -513,7 +535,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
                 if (mLoadingView == null) {
                     throw new NullPointerException("Loading View");
                 }
-                if (mContentView != null) mContentView.setVisibility(View.GONE);
+                contentViewVisibility(false);
                 if (mErrorView != null) mErrorView.setVisibility(View.GONE);
                 if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
                 if (mNoNetworkView != null) mNoNetworkView.setVisibility(View.GONE);
@@ -536,7 +558,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
 
                 if (mLoadingView != null) mLoadingView.setVisibility(View.GONE);
                 if (mErrorView != null) mErrorView.setVisibility(View.GONE);
-                if (mContentView != null) mContentView.setVisibility(View.GONE);
+                contentViewVisibility(false);
                 if (mNoNetworkView != null) mNoNetworkView.setVisibility(View.GONE);
                 if (mProcessView != null) mProcessView.setVisibility(View.GONE);
                 if (mAnimateViewChanges) {
@@ -556,7 +578,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
 
 
                 if (mLoadingView != null) mLoadingView.setVisibility(View.GONE);
-                if (mContentView != null) mContentView.setVisibility(View.GONE);
+                contentViewVisibility(false);
                 if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
                 if (mNoNetworkView != null) mNoNetworkView.setVisibility(View.GONE);
                 if (mProcessView != null) mProcessView.setVisibility(View.GONE);
@@ -572,7 +594,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
                     throw new NullPointerException("No Network View");
                 }
                 if (mLoadingView != null) mLoadingView.setVisibility(View.GONE);
-                if (mContentView != null) mContentView.setVisibility(View.GONE);
+                contentViewVisibility(false);
                 if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
                 if (mProcessView != null) mProcessView.setVisibility(View.GONE);
                 if (mAnimateViewChanges) {
@@ -587,7 +609,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
                     throw new NullPointerException("No Network View");
                 }
                 if (mLoadingView != null) mLoadingView.setVisibility(View.GONE);
-                if (mContentView != null) mContentView.setVisibility(View.VISIBLE);
+                contentViewVisibility(true);
                 if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);
 
                 if (mAnimateViewChanges) {
@@ -611,7 +633,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
                 if (mAnimateViewChanges) {
                     animateLayoutChange(getView(previousState));
                 } else {
-                    mContentView.setVisibility(View.VISIBLE);
+                    contentViewVisibility(true);
                 }
                 break;
         }
