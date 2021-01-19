@@ -115,6 +115,12 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
     private int mNestedOffsetY;
     private NestedScrollingChildHelper mChildHelper;
 
+    public MultiStateView(Context context, View contentView) {
+        super(context);
+        init(null, context);
+        setContentView(contentView);
+    }
+
     public MultiStateView(Context context) {
         super(context);
         init(null, context);
@@ -179,6 +185,33 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
         super.onAttachedToWindow();
         if (mContentView == null) throw new IllegalArgumentException("Content view is not defined");
         setView(VIEW_STATE_UNKNOWN);
+    }
+
+    /**
+     * 添加一个状态布局
+     *
+     * @param status 状态类型
+     * @param view   需要添加的布局
+     * @author dingpeihua
+     * @date 2021/1/19 18:17
+     * @version 1.0
+     */
+    public void addView(@ViewState int status, View view) {
+        setViewForState(view, status);
+    }
+
+    /**
+     * 添加一个状态布局
+     *
+     * @param status 状态类型
+     * @param rid    布局id
+     * @author dingpeihua
+     * @date 2021/1/19 18:17
+     * @version 1.0
+     */
+    public void addView(@ViewState int status, @LayoutRes int rid) {
+        View view = LayoutInflater.from(getContext()).inflate(rid, this, false);
+        addView(status, view);
     }
 
     public void setLoadingViewResId(int loadingViewResId) {
