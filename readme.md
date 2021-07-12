@@ -79,16 +79,19 @@ public View getView（@ViewState int state）
 ## 添加存储库
 
 ```py
- repositories {
-        maven { url 'http://10.36.5.100:8081/repository/maven-public/' }
-    }
+ allprojects {
+ 		repositories {
+ 			...
+ 			maven { url 'https://jitpack.io' }
+ 		}
+ 	}
 ```
 
 ## 添加依赖
 
 ```py
 dependencies {
-    implementation 'com.fz.multistateview:MultiStateView:1.0.1'
+    implementation 'com.github.peihua8858:MultiStatusView:1.0.0'
 }
 ```
 
