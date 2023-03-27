@@ -234,28 +234,47 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
         this.mProcessViewResId = processViewResId;
     }
 
+    @Override
+    public void removeView(View view) {
+        if (view != null) {
+            super.removeView(view);
+        }
+    }
+
     public void setContentView(View mContentView) {
+        removeView(this.mContentView);
+        this.mContentView = mContentView;
         addView(mContentView);
     }
 
     public void setLoadingView(View mLoadingView) {
+        removeView(this.mLoadingView);
         this.mLoadingView = mLoadingView;
+        addView(mLoadingView);
     }
 
     public void setErrorView(View mErrorView) {
+        removeView(this.mErrorView);
         this.mErrorView = mErrorView;
+        addView(mErrorView);
     }
 
     public void setEmptyView(View mEmptyView) {
+        removeView(this.mEmptyView);
         this.mEmptyView = mEmptyView;
+        addView(mEmptyView);
     }
 
     public void setNoNetworkView(View mNoNetworkView) {
+        removeView(this.mNoNetworkView);
         this.mNoNetworkView = mNoNetworkView;
+        addView(mNoNetworkView);
     }
 
     public void setProcessView(View mProcessView) {
+        removeView(this.mProcessView);
         this.mProcessView = mProcessView;
+        addView(mProcessView);
     }
 
     public boolean hasContentView() {
