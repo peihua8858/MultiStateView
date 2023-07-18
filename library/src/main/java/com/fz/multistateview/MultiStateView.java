@@ -36,8 +36,6 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -79,6 +77,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
     public static final int VIEW_STATE_LOADING = 3;
     public static final int VIEW_STATE_NO_NETWORK = 4;
     public static final int VIEW_STATE_PROCESS = 5;
+    private int mScrollViewResId = NO_ID;
     private int mLoadingViewResId = NO_ID;
     private int mEmptyViewResId = NO_ID;
     private int mErrorViewResId = NO_ID;
@@ -150,7 +149,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
         mInflater = LayoutInflater.from(context);
         if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MultiStateView);
-
+            mScrollViewResId = a.getResourceId(R.styleable.MultiStateView_msv_scrollViewId, NO_ID);
             mLoadingViewResId = a.getResourceId(R.styleable.MultiStateView_msv_loadingView, NO_ID);
 
             mEmptyViewResId = a.getResourceId(R.styleable.MultiStateView_msv_emptyView, NO_ID);
@@ -1055,25 +1054,25 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
     }
 
     @Override
-    public boolean canScrollVertically(int direction) {
-        View scrollView = findScrollView(this);
-        if (scrollView != null) {
-            return scrollView.canScrollVertically(direction);
-        }
-        return super.canScrollVertically(direction);
-    }
-
-    View findScrollView(ViewGroup parent) {
-        int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            View childView = parent.getChildAt(i);
-            if (childView instanceof NestedScrollView || childView instanceof RecyclerView) {
-                return childView;
-            } else if (childView instanceof ViewGroup) {
-                return findScrollView((ViewGroup) childView);
+    public boolean canScrollHorizontally(int direction) {
+        if (mScrollViewResId != NO_ID) {
+            View scrollView = findViewById(mScrollViewResId);
+            if (scrollView != null) {
+                return scrollView.canScrollHorizontally(direction);
             }
         }
-        return null;
+        return super.canScrollHorizontally(direction);
+    }
+
+    @Override
+    public boolean canScrollVertically(int direction) {
+        if (mScrollViewResId != NO_ID) {
+            View scrollView = findViewById(mScrollViewResId);
+            if (scrollView != null) {
+                return scrollView.canScrollVertically(direction);
+            }
+        }
+        return super.canScrollVertically(direction);
     }
 
     @Override

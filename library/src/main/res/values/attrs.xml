@@ -4,6 +4,7 @@
         <attr name="msv_loadingView" format="reference" />
         <attr name="msv_emptyView" format="reference" />
         <attr name="msv_errorView" format="reference" />
+        <attr name="msv_scrollViewId" format="reference" />
         <attr name="msv_noNetworkView" format="reference" />
         <attr name="msv_processView" format="reference" />
         <!--强制显示内容区域，默认false-->
