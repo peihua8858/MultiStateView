@@ -31,8 +31,13 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChild3;
 import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.NestedScrollingParent3;
+import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -54,7 +59,8 @@ import java.lang.annotation.RetentionPolicy;
  * @version 1.0
  * @date 2019/1/15 14:03
  */
-public class MultiStateView extends FrameLayout implements NestedScrollingChild {
+public class MultiStateView extends FrameLayout implements NestedScrollingParent3,
+        NestedScrollingChild3, NestedScrollingChild {
     public static String TAG = "MultiStateView";
     private static final String TAG_EMPTY = "empty";
     private static final String TAG_LOADING = "loading";
@@ -114,6 +120,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
     private final int[] mScrollConsumed = new int[2];
     private int mNestedOffsetY;
     private NestedScrollingChildHelper mChildHelper;
+    private NestedScrollingParentHelper mParentHelper;
 
     public MultiStateView(Context context, View contentView) {
         super(context);
@@ -138,6 +145,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
 
     private void init(AttributeSet attrs, Context context) {
         mChildHelper = new NestedScrollingChildHelper(this);
+        mParentHelper = new NestedScrollingParentHelper(this);
         setNestedScrollingEnabled(true);
         mInflater = LayoutInflater.from(context);
         if (attrs != null) {
@@ -1048,7 +1056,103 @@ public class MultiStateView extends FrameLayout implements NestedScrollingChild 
 
     @Override
     public boolean canScrollVertically(int direction) {
+        View scrollView = findScrollView(this);
+        if (scrollView != null) {
+            return scrollView.canScrollVertically(direction);
+        }
         return super.canScrollVertically(direction);
+    }
+
+    View findScrollView(ViewGroup parent) {
+        int childCount = parent.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            View childView = parent.getChildAt(i);
+            if (childView instanceof NestedScrollView || childView instanceof RecyclerView) {
+                return childView;
+            } else if (childView instanceof ViewGroup) {
+                return findScrollView((ViewGroup) childView);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow, int type, @NonNull int[] consumed) {
+        mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
+                offsetInWindow, type, consumed);
+    }
+
+    @Override
+    public boolean startNestedScroll(int axes, int type) {
+        return mChildHelper.startNestedScroll(axes, type);
+    }
+
+    @Override
+    public void stopNestedScroll(int type) {
+        mChildHelper.stopNestedScroll(type);
+    }
+
+    @Override
+    public boolean hasNestedScrollingParent(int type) {
+        return mChildHelper.hasNestedScrollingParent(type);
+    }
+
+    @Override
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow, int type) {
+        return mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
+                offsetInWindow, type);
+    }
+
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed, @Nullable int[] offsetInWindow, int type) {
+        return mChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type);
+    }
+
+    @Override
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
+//        onNestedScrollInternal(dyUnconsumed, type, consumed);
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+    }
+
+    @Override
+    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
+        return (axes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
+    }
+
+    @Override
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
+        mParentHelper.onNestedScrollAccepted(child, target, axes, type);
+        startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL, type);
+    }
+
+    @Override
+    public void onStopNestedScroll(@NonNull View target, int type) {
+        mParentHelper.onStopNestedScroll(target, type);
+        stopNestedScroll(type);
+    }
+
+    @Override
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+//        onNestedScrollInternal(dyUnconsumed, type, null);
+    }
+
+    @Override
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
+        dispatchNestedPreScroll(dx, dy, consumed, null, type);
+    }
+
+    protected void onNestedScrollInternal(int dyUnconsumed, int type, @Nullable int[] consumed) {
+        final int oldScrollY = getScrollY();
+        scrollBy(0, dyUnconsumed);
+        final int myConsumed = getScrollY() - oldScrollY;
+
+        if (consumed != null) {
+            consumed[1] += myConsumed;
+        }
+        final int myUnconsumed = dyUnconsumed - myConsumed;
+
+        mChildHelper.dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type, consumed);
     }
 
     public interface StateListener {
