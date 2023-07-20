@@ -1110,7 +1110,8 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
 //        onNestedScrollInternal(dyUnconsumed, type, consumed);
-        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+//        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+        onNestedScrollInternal(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed);
     }
 
     @Override
@@ -1132,8 +1133,9 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
-        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+//        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
 //        onNestedScrollInternal(dyUnconsumed, type, null);
+        onNestedScrollInternal(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, null);
     }
 
     @Override
@@ -1141,17 +1143,16 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
     }
 
-    protected void onNestedScrollInternal(int dyUnconsumed, int type, @Nullable int[] consumed) {
-        final int oldScrollY = getScrollY();
-        scrollBy(0, dyUnconsumed);
-        final int myConsumed = getScrollY() - oldScrollY;
+    protected void onNestedScrollInternal(int dxConsumed ,int dyConsumed,int dxUnconsumed, int dyUnconsumed, int type, @Nullable int[] consumed) {
+//        final int oldScrollY = getScrollY();
+//        scrollBy(0, dyUnconsumed);
+//        final int myConsumed = getScrollY() - oldScrollY;
+//        if (consumed != null) {
+//            consumed[1] += myConsumed;
+//        }
+//        final int myUnconsumed = dyUnconsumed - myConsumed;
 
-        if (consumed != null) {
-            consumed[1] += myConsumed;
-        }
-        final int myUnconsumed = dyUnconsumed - myConsumed;
-
-        mChildHelper.dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type, consumed);
+        mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, null, type, consumed);
     }
 
     public interface StateListener {
