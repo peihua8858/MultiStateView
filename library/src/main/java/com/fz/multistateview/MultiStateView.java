@@ -1143,7 +1143,7 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
         dispatchNestedPreScroll(dx, dy, consumed, null, type);
     }
 
-    protected void onNestedScrollInternal(int dxConsumed ,int dyConsumed,int dxUnconsumed, int dyUnconsumed, int type, @Nullable int[] consumed) {
+    protected void onNestedScrollInternal(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @Nullable int[] consumed) {
 //        final int oldScrollY = getScrollY();
 //        scrollBy(0, dyUnconsumed);
 //        final int myConsumed = getScrollY() - oldScrollY;
@@ -1153,6 +1153,20 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
 //        final int myUnconsumed = dyUnconsumed - myConsumed;
 
         mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, null, type, consumed);
+    }
+
+    /**
+     * 设置按钮点击事件
+     *
+     * @author dingpeihua
+     * @date 2018/12/10 11:13
+     * @version 1.0
+     */
+    public void setClickListener(@IdRes int viewId, OnClickListener listener) {
+        View btnRetry = findViewById(viewId);
+        if (btnRetry != null) {
+            btnRetry.setOnClickListener(listener);
+        }
     }
 
     public interface StateListener {
