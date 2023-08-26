@@ -1053,6 +1053,10 @@ public class MultiStateView extends FrameLayout implements NestedScrollingParent
         return mChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
+    public void setScrollViewResId(int mScrollViewResId) {
+        this.mScrollViewResId = mScrollViewResId;
+    }
+
     @Override
     public boolean canScrollHorizontally(int direction) {
         if (mScrollViewResId != NO_ID) {
