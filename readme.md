@@ -26,7 +26,7 @@ repositories {
 }
 
 dependencies {
-  // PictureSelector
+  // MultiStateView
   implementation 'com.github.peihua8858:MultiStateView:${latestVersion}'
 }
 ```
